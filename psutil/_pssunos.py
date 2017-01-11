@@ -422,8 +422,10 @@ class Process(object):
     def cmdline(self):
         cmd = [self.PARGS_BINARY, str(self.pid)]
         try:
-            out = subprocess.check_output(cmd, stderr=subprocess.STDOUT)
-            return self._parse_pargs_output(out)
+            stdout = subprocess.check_output(cmd, stderr=subprocess.STDOUT)
+            if PY3:
+                stdout = stdout.decode(sys.stdout.encoding)
+            return self._parse_pargs_output(stdout)
         except (subprocess.CalledProcessError, EnvironmentError):
             return self._proc_name_and_args()[1].split(' ')
 
